@@ -243,11 +243,6 @@ class ProsenicVacuum(StateVacuumEntity):
         return [f.value for f in FanSpeed]
 
     @property
-    def water_speed(self):
-        """Return the water speed of the vacuum cleaner."""
-        return self._additional_attr[ATTR_WATER_SPEED].value
-
-    @property
     def water_speed_list(self):
         """Get the list of available water speed steps of the vacuum cleaner."""
         w: WaterSpeedMode
