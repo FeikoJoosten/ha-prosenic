@@ -317,8 +317,8 @@ class ProsenicVacuum(StateVacuumEntity):
     
     async def async_send_command(self, command, params=None, **kwargs):
         """Send raw command."""
-            _LOGGER.warning("Raw Command: (%s) VS (%s)", command, SERVICE_SET_WATER_SPEED)
         try:
+            _LOGGER.warning("Raw Command: (%s) VS (%s)", command, SERVICE_SET_WATER_SPEED)
             if command == SERVICE_SET_WATER_SPEED:
                 await self.async_set_water_speed(params)
         except Exception:
