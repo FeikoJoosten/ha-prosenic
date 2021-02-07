@@ -46,7 +46,6 @@ from .const import (
     ATTR_BRUSH_HEALTH,
     ATTR_RESET_FILTER,
     ATTR_DEVICE_MODEL,
-    ATTR_WATER_SPEED,
     REMEMBER_FAN_SPEED_DELAY,
     DATA_KEY,
     STATE_MOPPING,
@@ -209,6 +208,7 @@ class ProsenicVacuum(StateVacuumEntity):
         self._fault: Fault = Fault.NO_ERROR
         self._fan_speed: FanSpeed = FanSpeed.NORMAL
         self._stored_fan_speed: FanSpeed = self._fan_speed
+        self_water_speed: WaterSpeedMode = WaterSpeedMode.MEDIUM
         self._additional_attr: Dict[str, Union[bool, str, int]] = dict()
 
     @property
@@ -242,6 +242,11 @@ class ProsenicVacuum(StateVacuumEntity):
         """Get the list of available fan speed steps of the vacuum cleaner."""
         f: FanSpeed
         return [f.value for f in FanSpeed]
+
+    @property
+    def water_speed(self):
+        """Return the water speed of the vacuum cleaner."""
+        return self._water_speed.value
 
     @property
     def water_speed_list(self):
@@ -432,7 +437,7 @@ class ProsenicVacuum(StateVacuumEntity):
                     self._additional_attr[ATTR_DEVICE_MODEL] = v
 
                 elif field == Fields.WATER_SPEED:
-                    self._additional_attr[ATTR_WATER_SPEED] = WaterSpeedMode(v)
+                    self._water_speed = WaterSpeedMode(v)
 
             except (KeyError, ValueError):
                 _LOGGER.warning(

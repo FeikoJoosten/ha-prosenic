@@ -22,7 +22,6 @@ ATTR_FILTER_HEALTH = "filter_health"
 ATTR_SIDE_BRUSH_HEALTH = "side_brush_health"
 ATTR_BRUSH_HEALTH = "brush_health"
 ATTR_SENSOR_HEALTH = "sensor_health"
-ATTR_WATER_SPEED = "water_speed"
 
 # in seconds
 REMEMBER_FAN_SPEED_DELAY = 6
