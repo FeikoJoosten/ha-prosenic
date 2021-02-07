@@ -39,6 +39,8 @@ from .const import (
     ATTR_ERROR,
     ATTR_CLEANING_TIME,
     ATTR_MOP_EQUIPPED,
+    ATTR_RESET_FILTER,
+    ATTR_DEVIVICE_MODEL,
     REMEMBER_FAN_SPEED_DELAY,
     DATA_KEY,
     STATE_MOPPING,
@@ -124,6 +126,8 @@ class Fields(Enum):
     CLEAN_AREA = 41  # ro
     CLEAN_TIME = 42  # ro
     SWEEP_OR_MOP = 49  # ro
+    RESET_FILTER = 52 #ro
+    DEVICE_MODEL = 58 #ro
 
 
 class CleaningMode(Enum):
@@ -366,6 +370,12 @@ class ProsenicVacuum(StateVacuumEntity):
 
                 elif field == Fields.SWEEP_OR_MOP:
                     self._additional_attr[ATTR_MOP_EQUIPPED] = False if v == "sweep" else True
+                
+                elif field == Fields.RESET_FILTER:
+                    self._additional_attr[ATTR_RESET_FILTER] = v
+                
+                elif field == Fields.DEVICE_MODEL:
+                    self._additional_attr[ATTR_DEVIVICE_MODEL] = v
 
             except (KeyError, ValueError):
                 _LOGGER.warning(
