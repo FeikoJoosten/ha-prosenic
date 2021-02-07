@@ -11,6 +11,8 @@ DATA_KEY = f"{VACUUM_DOMAIN}.{DOMAIN}"
 CONF_LOCAL_KEY = "local_key"
 CONF_REMEMBER_FAN_SPEED = "remember_fan_speed"
 
+SERVICE_SET_WATER_SPEED = "set_water_speed"
+
 ATTR_MOP_EQUIPPED = "mop_equipped"
 ATTR_CLEANING_TIME = "cleaning_time"
 ATTR_ERROR = "error"

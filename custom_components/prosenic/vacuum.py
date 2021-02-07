@@ -165,7 +165,7 @@ class FanSpeed(Enum):
 class WaterSpeedMode(Enum):
     LOW = "low"
     MEDIUM = "medium"
-    HIGH = "high"
+    HIGH = "Big"
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
@@ -243,6 +243,11 @@ class ProsenicVacuum(StateVacuumEntity):
         return [f.value for f in FanSpeed]
 
     @property
+    def water_speed(self):
+        """Return the water speed of the vacuum cleaner."""
+        return self._water_speed.value
+
+    @property
     def water_speed_list(self):
         """Get the list of available water speed steps of the vacuum cleaner."""
         w: WaterSpeedMode
@@ -309,7 +314,7 @@ class ProsenicVacuum(StateVacuumEntity):
                 self.fan_speed_list,
             )
             
-    async def async_set_mop_water_speed(self, water_speed: str, **kwargs):
+    async def async_set_water_speed(self, water_speed: str, **kwargs):
         """Set mop water speed."""
         try:
             value = WaterSpeedMode(water_speed)
