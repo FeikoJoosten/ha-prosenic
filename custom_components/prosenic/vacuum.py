@@ -21,6 +21,7 @@ from homeassistant.components.vacuum import (
     SUPPORT_START,
     SUPPORT_STATE,
     SUPPORT_STOP,
+    SUPPORT_SEND_COMMAND,
     StateVacuumEntity,
     SUPPORT_PAUSE,
     STATE_RETURNING,
@@ -207,7 +208,6 @@ class ProsenicVacuum(StateVacuumEntity):
         self._fault: Fault = Fault.NO_ERROR
         self._fan_speed: FanSpeed = FanSpeed.NORMAL
         self._stored_fan_speed: FanSpeed = self._fan_speed
-        self._water_speed : WaterSpeed = WaterSpeedMode.MEDIUM
         self._additional_attr: Dict[str, Union[bool, str, int]] = dict()
 
     @property
@@ -245,7 +245,7 @@ class ProsenicVacuum(StateVacuumEntity):
     @property
     def water_speed(self):
         """Return the water speed of the vacuum cleaner."""
-        return self._water_speed.value
+        return self._additional_attr[ATTR_WATER_SPEED].value
 
     @property
     def water_speed_list(self):
@@ -313,6 +313,14 @@ class ProsenicVacuum(StateVacuumEntity):
                 fan_speed,
                 self.fan_speed_list,
             )
+    
+    async def async_send_command(self, command, params=None, **kwargs):
+        """Send raw command."""
+        try:
+            if(components == SERVICE_SET_WATER_SPEED)
+                await self.async_set_water_speed(params)
+        except Exception:
+            _LOGGER.error("Unsupported raw command")
             
     async def async_set_water_speed(self, water_speed: str, **kwargs):
         """Set mop water speed."""
@@ -428,7 +436,7 @@ class ProsenicVacuum(StateVacuumEntity):
                     self._additional_attr[ATTR_DEVICE_MODEL] = v
 
                 elif field == Fields.WATER_SPEED:
-                    self._water_speed = WaterSpeedMode(v)
+                    self._additional_attr[ATTR_WATER_SPEED] = WaterSpeedMode(v)
 
             except (KeyError, ValueError):
                 _LOGGER.warning(
