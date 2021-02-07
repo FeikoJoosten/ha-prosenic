@@ -14,8 +14,12 @@ CONF_REMEMBER_FAN_SPEED = "remember_fan_speed"
 ATTR_MOP_EQUIPPED = "mop_equipped"
 ATTR_CLEANING_TIME = "cleaning_time"
 ATTR_ERROR = "error"
-ATTR_DEVIVICE_MODEL = "device_model"
+ATTR_DEVICE_MODEL = "device_model"
 ATTR_RESET_FILTER = "reset_filter"
+ATTR_FILTER_HEALTH = "filter_health"
+ATTR_SIDE_BRUSH_HEALTH = "side_brush_health"
+ATTR_BRUSH_HEALTH = "brush_health"
+ATTR_SENSOR_HEALTH = "sensor_health"
 
 # in seconds
 REMEMBER_FAN_SPEED_DELAY = 6

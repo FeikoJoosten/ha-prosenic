@@ -39,8 +39,12 @@ from .const import (
     ATTR_ERROR,
     ATTR_CLEANING_TIME,
     ATTR_MOP_EQUIPPED,
+    ATTR_SENSOR_HEALTH,
+    ATTR_FILTER_HEALTH,
+    ATTR_SIDE_BRUSH_HEALTH,
+    ATTR_BRUSH_HEALTH,
     ATTR_RESET_FILTER,
-    ATTR_DEVIVICE_MODEL,
+    ATTR_DEVICE_MODEL,
     REMEMBER_FAN_SPEED_DELAY,
     DATA_KEY,
     STATE_MOPPING,
@@ -125,9 +129,14 @@ class Fields(Enum):
     CLEAN_RECORD = 40  # ro
     CLEAN_AREA = 41  # ro
     CLEAN_TIME = 42  # ro
-    SWEEP_OR_MOP = 49  # ro
+    SENSOR_HEALTH = 44 #ro
+    FILTER_HEALTH = 45 #ro
+    SIDE_BRUSH_HEALTH = 47 #ro
+    BRUSH_HEALTH = 48 #ro
+    SWEEP_OR_MOP = 49 # ro
     RESET_FILTER = 52 #ro
     DEVICE_MODEL = 58 #ro
+    WATER_SPEED = 60 #rw
 
 
 class CleaningMode(Enum):
@@ -152,6 +161,11 @@ class FanSpeed(Enum):
     ECO = "ECO"
     NORMAL = "normal"
     STRONG = "strong"
+
+class WaterSpeedMode(Enum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
@@ -193,6 +207,7 @@ class ProsenicVacuum(StateVacuumEntity):
         self._fault: Fault = Fault.NO_ERROR
         self._fan_speed: FanSpeed = FanSpeed.NORMAL
         self._stored_fan_speed: FanSpeed = self._fan_speed
+        self._water_speed : WaterSpeed = WaterSpeedMode.MEDIUM
         self._additional_attr: Dict[str, Union[bool, str, int]] = dict()
 
     @property
@@ -226,6 +241,12 @@ class ProsenicVacuum(StateVacuumEntity):
         """Get the list of available fan speed steps of the vacuum cleaner."""
         f: FanSpeed
         return [f.value for f in FanSpeed]
+
+    @property
+    def water_speed_list(self):
+        """Get the list of available water speed steps of the vacuum cleaner."""
+        w: WaterSpeedMode
+        return [w.value for w in WaterSpeedMode]
 
     @property
     def should_poll(self):
@@ -286,6 +307,18 @@ class ProsenicVacuum(StateVacuumEntity):
                 "Fan speed not recognized (%s). Valid speeds are: %s",
                 fan_speed,
                 self.fan_speed_list,
+            )
+            
+    async def async_set_mop_water_speed(self, water_speed: str, **kwargs):
+        """Set mop water speed."""
+        try:
+            value = WaterSpeedMode(water_speed)
+            await self._execute_command(Fields.WATER_SPEED, value)
+        except Exception:
+            _LOGGER.error(
+                "Water speed not recognized (%s). Valid speeds are: %s",
+                water_speed,
+                self.water_speed_list,
             )
 
     def update(self):
@@ -370,12 +403,27 @@ class ProsenicVacuum(StateVacuumEntity):
 
                 elif field == Fields.SWEEP_OR_MOP:
                     self._additional_attr[ATTR_MOP_EQUIPPED] = False if v == "sweep" else True
+
+                elif field == Fields.SENSOR_HEALTH:
+                    self._additional_attr[ATTR_SENSOR_HEALTH] = int(v)
+
+                elif field == Fields.FILTER_HEALTH:
+                    self._additional_attr[ATTR_FILTER_HEALTH] = int(v)
+
+                elif field == Fields.SIDE_BRUSH_HEALTH:
+                    self._additional_attr[ATTR_SIDE_BRUSH_HEALTH] = int(v)
+
+                elif field == Fields.BRUSH_HEALTH:
+                    self._additional_attr[ATTR_BRUSH_HEALTH] = int(v)
                 
                 elif field == Fields.RESET_FILTER:
                     self._additional_attr[ATTR_RESET_FILTER] = v
                 
                 elif field == Fields.DEVICE_MODEL:
-                    self._additional_attr[ATTR_DEVIVICE_MODEL] = v
+                    self._additional_attr[ATTR_DEVICE_MODEL] = v
+
+                elif field == Fields.WATER_SPEED:
+                    self._water_speed = WaterSpeedMode(v)
 
             except (KeyError, ValueError):
                 _LOGGER.warning(
