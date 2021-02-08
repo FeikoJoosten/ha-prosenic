@@ -5,7 +5,7 @@ from enum import Enum, IntFlag
 from functools import partial
 from typing import Optional, Union, Dict
 
-import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers import config_validation as cv, entity_platform
 import voluptuous as vol
 from homeassistant.components.vacuum import (
     PLATFORM_SCHEMA,
@@ -25,7 +25,8 @@ from homeassistant.components.vacuum import (
     StateVacuumEntity,
     SUPPORT_PAUSE,
     STATE_RETURNING,
-    ATTR_CLEANED_AREA
+    ATTR_CLEANED_AREA,
+    DOMAIN
 )
 from homeassistant.const import (
     CONF_HOST,
@@ -46,10 +47,13 @@ from .const import (
     ATTR_BRUSH_HEALTH,
     ATTR_RESET_FILTER,
     ATTR_DEVICE_MODEL,
+    ATTR_WATER_SPEED,
+    ATTR_WATER_SPEED_LIST,
     REMEMBER_FAN_SPEED_DELAY,
     DATA_KEY,
     STATE_MOPPING,
-    STATES
+    STATES,
+    SERVICE_SET_WATER_SPEED
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -164,7 +168,7 @@ class FanSpeed(Enum):
     STRONG = "strong"
 
 class WaterSpeedMode(Enum):
-    LOW = "low"
+    LOW = "small"
     MEDIUM = "medium"
     HIGH = "Big"
 
@@ -191,6 +195,17 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 
     async_add_entities([robot], update_before_add=True)
 
+    platform = entity_platform.current_platform.get()
+
+    hass.data[DOMAIN].async_register_entity_service(
+        SERVICE_SET_WATER_SPEED,
+        {
+            vol.Required(ATTR_WATER_SPEED):
+                vol.All(vol.Coerce(str))
+        },
+        ProsenicVacuum.async_set_water_speed.__name__,
+    )
+
 
 class ProsenicVacuum(StateVacuumEntity):
     """Representation of a Prosenic Vacuum cleaner robot."""
@@ -207,8 +222,8 @@ class ProsenicVacuum(StateVacuumEntity):
         self._battery: Optional[int] = None
         self._fault: Fault = Fault.NO_ERROR
         self._fan_speed: FanSpeed = FanSpeed.NORMAL
+        self._water_speed: WaterSpeedMode = WaterSpeedMode.MEDIUM
         self._stored_fan_speed: FanSpeed = self._fan_speed
-        self_water_speed: WaterSpeedMode = WaterSpeedMode.MEDIUM
         self._additional_attr: Dict[str, Union[bool, str, int]] = dict()
 
     @property
@@ -314,12 +329,6 @@ class ProsenicVacuum(StateVacuumEntity):
                 fan_speed,
                 self.fan_speed_list,
             )
-    
-    async def async_send_command(self, command, params=None, **kwargs):
-        """Send raw command."""
-        _LOGGER.error("Raw Command: (%s) VS (%s)", command, SERVICE_SET_WATER_SPEED)
-        if command == SERVICE_SET_WATER_SPEED:
-            await self.async_set_water_speed(params)
             
     async def async_set_water_speed(self, water_speed: str, **kwargs):
         """Set mop water speed."""
@@ -436,6 +445,8 @@ class ProsenicVacuum(StateVacuumEntity):
 
                 elif field == Fields.WATER_SPEED:
                     self._water_speed = WaterSpeedMode(v)
+                    self._additional_attr[ATTR_WATER_SPEED] = self._water_speed.value
+                    self._additional_attr[ATTR_WATER_SPEED_LIST] = self.water_speed_list
 
             except (KeyError, ValueError):
                 _LOGGER.warning(

@@ -1,0 +1,9 @@
+set_water_speed:
+  description: Sets the water speed of the mod
+  fields:
+    entity_id:
+      description: Name of the vacuum entity.
+      example: "vacuum.my_vacuum"
+    water_speed:
+      description: "The amount of water released by the vacuum. Valid options: small, medium, Big"
+      example: medium
