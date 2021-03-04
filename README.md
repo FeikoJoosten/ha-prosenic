@@ -152,7 +152,7 @@ If you find a problem/bug or you have a feature request, please open an issue.
 - Automated test
 
 [hacs]: https://hacs.xyz
-[hacsbadge]: https://img.shields.io/badge/HACS-DEFAULT-inactive?style=for-the-badge
+[hacsbadge]: https://img.shields.io/badge/HACS-CUSTOM-inactive?style=for-the-badge
 [license-shield]: https://img.shields.io/github/license/FeikoJoosten/ha-prosenic?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/Maintainer-Feiko%20Joosten-blue?style=for-the-badge
 [pytuya]: https://github.com/clach04/python-tuya
