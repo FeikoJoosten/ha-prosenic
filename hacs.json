@@ -4,6 +4,6 @@
   "country": ["IT", "AT"],
   "iot_class": "Local Polling",
   "zip_release": false,
-  "hide_default_branch": true,
+  "hide_default_branch": false,
   "homeassistant": "0.109.0"
 }
