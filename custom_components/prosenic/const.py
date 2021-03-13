@@ -10,6 +10,7 @@ DATA_KEY = f"{VACUUM_DOMAIN}.{DOMAIN}"
 
 CONF_LOCAL_KEY = "local_key"
 CONF_REMEMBER_FAN_SPEED = "remember_fan_speed"
+CONF_ENABLE_DEBUG = "enable_debug"
 
 SERVICE_SET_WATER_SPEED = "set_water_speed"
 

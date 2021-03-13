@@ -38,6 +38,7 @@ from .const import (
     CONF_LOCAL_KEY,
     DEFAULT_NAME,
     CONF_REMEMBER_FAN_SPEED,
+    CONF_ENABLE_DEBUG,
     ATTR_ERROR,
     ATTR_CLEANING_TIME,
     ATTR_MOP_EQUIPPED,
@@ -64,7 +65,8 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Required(CONF_DEVICE_ID): cv.string,
         vol.Required(CONF_LOCAL_KEY): vol.All(str, vol.Length(min=15, max=16)),
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional(CONF_REMEMBER_FAN_SPEED, default=False): cv.boolean
+        vol.Optional(CONF_REMEMBER_FAN_SPEED, default=False): cv.boolean,
+        vol.Optional(CONF_ENABLE_DEBUG, default=False): cv.cv.boolean
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -183,6 +185,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     local_key = config[CONF_LOCAL_KEY]
     name = config[CONF_NAME]
     remember_fan_speed = config[CONF_REMEMBER_FAN_SPEED]
+    enable_debug = config[CONF_ENABLE_DEBUG]
 
     # Create handler
     _LOGGER.info("Initializing with host %s", host)
@@ -190,7 +193,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     device = Device(device_id, host, local_key, "device")
     device.version = 3.3
 
-    robot = ProsenicVacuum(name, device, remember_fan_speed)
+    robot = ProsenicVacuum(name, device, remember_fan_speed, enable_debug)
     hass.data[DATA_KEY][host] = robot
 
     async_add_entities([robot], update_before_add=True)
@@ -210,11 +213,12 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 class ProsenicVacuum(StateVacuumEntity):
     """Representation of a Prosenic Vacuum cleaner robot."""
 
-    def __init__(self, name: str, device: Device, remember_fan_speed: bool):
+    def __init__(self, name: str, device: Device, remember_fan_speed: bool, enable_debug: bool):
         """Initialize the Prosenic vacuum cleaner robot."""
         self._name = name
         self._device = device
         self._remember_fan_speed = remember_fan_speed
+        self._enable_debug = enable_debug
 
         self._available = False
         self._current_state: Optional[CurrentState] = None
@@ -449,11 +453,13 @@ class ProsenicVacuum(StateVacuumEntity):
                     self._additional_attr[ATTR_WATER_SPEED_LIST] = self.water_speed_list
 
             except (KeyError, ValueError):
-                _LOGGER.warning(
-                    "An error occurred during the processing of the following item (%s:%s)",
-                    k,
-                    v
-                )
+                if self._enable_debug: {
+                    _LOGGER.warning(
+                        "An error occurred during the processing of the following item (%s:%s)",
+                        k,
+                        v
+                    )
+                }
                 continue
 
     async def _wait_and_set_stored_fan_speed(self):
