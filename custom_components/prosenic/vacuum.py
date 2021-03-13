@@ -66,7 +66,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Required(CONF_LOCAL_KEY): vol.All(str, vol.Length(min=15, max=16)),
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Optional(CONF_REMEMBER_FAN_SPEED, default=False): cv.boolean,
-        vol.Optional(CONF_ENABLE_DEBUG, default=False): cv.cv.boolean
+        vol.Optional(CONF_ENABLE_DEBUG, default=False): cv.boolean
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -453,13 +453,13 @@ class ProsenicVacuum(StateVacuumEntity):
                     self._additional_attr[ATTR_WATER_SPEED_LIST] = self.water_speed_list
 
             except (KeyError, ValueError):
-                if self._enable_debug: {
+                if self._enable_debug == True: 
                     _LOGGER.warning(
                         "An error occurred during the processing of the following item (%s:%s)",
                         k,
                         v
                     )
-                }
+                
                 continue
 
     async def _wait_and_set_stored_fan_speed(self):
