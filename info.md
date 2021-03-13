@@ -112,12 +112,12 @@ If you find a problem/bug or you have a feature request, please open an issue.
 - Automated test
 
 [hacs]: https://hacs.xyz
-[hacsbadge]: https://img.shields.io/badge/HACS-DEFAULT-inactive?style=for-the-badge
-[license-shield]: https://img.shields.io/github/license/edenhaus/ha-prosenic?style=for-the-badge
-[maintenance-shield]: https://img.shields.io/badge/Maintainer-Robert%20Resch-blue?style=for-the-badge
+[hacsbadge]: https://img.shields.io/badge/HACS-CUSTOM-inactive?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/FeikoJoosten/ha-prosenic?style=for-the-badge
+[maintenance-shield]: https://img.shields.io/badge/Maintainer-Feiko%20Joosten-blue?style=for-the-badge
 [pytuya]: https://github.com/clach04/python-tuya
 [tuyaapi-docs]: https://github.com/codetheweb/tuyapi/blob/master/docs/SETUP.md
-[release-zip]: https://github.com/edenhaus/ha-prosenic/releases/latest/download/prosenic.zip
+[release-zip]: https://github.com/FeikoJoosten/ha-prosenic/releases/latest/download/prosenic.zip
 
 [mitmproxy-install]: https://docs.mitmproxy.org/stable/overview-installation/
 [mitmproxy-certs]: https://docs.mitmproxy.org/stable/concepts-certificates/
