@@ -91,6 +91,7 @@ Edit it by adding the following lines:
         device_id: YOUR_DEVICE_ID
         local_key: YOUR_KEY
         remember_fan_speed: false #Optional, default false
+        enable_debug: false #Optional, default false
     ```
     **Note!** If you have already configured other vacuum robot, add your configuration there.
 
